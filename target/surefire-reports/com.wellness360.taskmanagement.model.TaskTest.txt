@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.wellness360.taskmanagement.model.TaskTest
--------------------------------------------------------------------------------
-Tests run: 48, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.184 s -- in com.wellness360.taskmanagement.model.TaskTest

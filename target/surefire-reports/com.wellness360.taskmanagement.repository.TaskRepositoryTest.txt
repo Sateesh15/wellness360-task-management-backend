@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.wellness360.taskmanagement.repository.TaskRepositoryTest
--------------------------------------------------------------------------------
-Tests run: 40, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.115 s -- in com.wellness360.taskmanagement.repository.TaskRepositoryTest

@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.wellness360.taskmanagement.exception.GlobalExceptionHandlerTest
--------------------------------------------------------------------------------
-Tests run: 40, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.406 s -- in com.wellness360.taskmanagement.exception.GlobalExceptionHandlerTest
