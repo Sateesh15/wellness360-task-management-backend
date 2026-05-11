@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TaskService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">task-management</a> &gt; <a href="index.source.html" class="el_package">com.wellness360.taskmanagement.service</a> &gt; <span class="el_source">TaskService.java</span></div><h1>TaskService.java</h1><pre class="source lang-java linenums">package com.wellness360.taskmanagement.service;
+
+import com.wellness360.taskmanagement.dto.TaskDto;
+import com.wellness360.taskmanagement.exception.TaskNotFoundException;
+import com.wellness360.taskmanagement.model.Task;
+import com.wellness360.taskmanagement.model.TaskStatus;
+import com.wellness360.taskmanagement.repository.TaskRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * Service layer containing all business logic for task management.
+ */
+@Service
+<span class="fc" id="L17">@RequiredArgsConstructor</span>
+public class TaskService {
+
+    private final TaskRepository taskRepository;
+
+    /**
+     * Retrieve all tasks.
+     * @return list of all task responses
+     */
+    public List&lt;TaskDto.Response&gt; getAllTasks() {
+<span class="fc" id="L27">        return taskRepository.findAll().stream()</span>
+<span class="fc" id="L28">                .map(this::toResponse)</span>
+<span class="fc" id="L29">                .toList();</span>
+    }
+
+    /**
+     * Retrieve a task by ID.
+     * @param id task identifier
+     * @return task response
+     * @throws TaskNotFoundException if task doesn't exist
+     */
+    public TaskDto.Response getTaskById(String id) {
+<span class="fc" id="L39">        Task task = findOrThrow(id);</span>
+<span class="fc" id="L40">        return toResponse(task);</span>
+    }
+
+    /**
+     * Create a new task.
+     * @param request creation payload
+     * @return created task response
+     */
+    public TaskDto.Response createTask(TaskDto.CreateRequest request) {
+<span class="fc" id="L49">        Task task = Task.create(</span>
+<span class="fc" id="L50">            request.getTitle().trim(),</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">            request.getDescription() != null ? request.getDescription().trim() : null,</span>
+<span class="fc" id="L52">            request.getDueDate()</span>
+        );
+<span class="fc" id="L54">        return toResponse(taskRepository.save(task));</span>
+    }
+
+    /**
+     * Update an existing task (partial or full update).
+     * @param id task identifier
+     * @param request update payload
+     * @return updated task response
+     */
+    public TaskDto.Response updateTask(String id, TaskDto.UpdateRequest request) {
+<span class="fc" id="L64">        Task task = findOrThrow(id);</span>
+
+<span class="pc bpc" id="L66" title="2 of 4 branches missed.">        if (request.getTitle() != null &amp;&amp; !request.getTitle().isBlank()) {</span>
+<span class="fc" id="L67">            task.setTitle(request.getTitle().trim());</span>
+        }
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        if (request.getDescription() != null) {</span>
+<span class="fc" id="L70">            task.setDescription(request.getDescription().trim());</span>
+        }
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        if (request.getDueDate() != null) {</span>
+<span class="nc" id="L73">            task.setDueDate(request.getDueDate());</span>
+        }
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (request.getStatus() != null) {</span>
+<span class="fc" id="L76">            task.setStatus(request.getStatus());</span>
+        }
+
+<span class="fc" id="L79">        task.touch();</span>
+<span class="fc" id="L80">        return toResponse(taskRepository.save(task));</span>
+    }
+
+    /**
+     * Delete a task by ID.
+     * @param id task identifier
+     * @throws TaskNotFoundException if task doesn't exist
+     */
+    public void deleteTask(String id) {
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if (!taskRepository.deleteById(id)) {</span>
+<span class="fc" id="L90">            throw new TaskNotFoundException(id);</span>
+        }
+<span class="fc" id="L92">    }</span>
+
+    /**
+     * Mark a task as completed.
+     * @param id task identifier
+     * @return updated task response
+     */
+    public TaskDto.Response markAsComplete(String id) {
+<span class="fc" id="L100">        Task task = findOrThrow(id);</span>
+<span class="fc" id="L101">        task.setStatus(TaskStatus.COMPLETED);</span>
+<span class="fc" id="L102">        task.touch();</span>
+<span class="fc" id="L103">        return toResponse(taskRepository.save(task));</span>
+    }
+
+    // ─── Private helpers ────────────────────────────────────────────────────────
+
+    private Task findOrThrow(String id) {
+<span class="fc" id="L109">        return taskRepository.findById(id)</span>
+<span class="fc" id="L110">                .orElseThrow(() -&gt; new TaskNotFoundException(id));</span>
+    }
+
+    /**
+     * Map Task entity to response DTO.
+     */
+    private TaskDto.Response toResponse(Task task) {
+<span class="fc" id="L117">        return TaskDto.Response.builder()</span>
+<span class="fc" id="L118">                .id(task.getId())</span>
+<span class="fc" id="L119">                .title(task.getTitle())</span>
+<span class="fc" id="L120">                .description(task.getDescription())</span>
+<span class="fc" id="L121">                .dueDate(task.getDueDate())</span>
+<span class="fc" id="L122">                .status(task.getStatus().getValue())</span>
+<span class="fc" id="L123">                .createdAt(task.getCreatedAt())</span>
+<span class="fc" id="L124">                .updatedAt(task.getUpdatedAt())</span>
+<span class="fc" id="L125">                .build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

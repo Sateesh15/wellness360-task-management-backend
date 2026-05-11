@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.wellness360.taskmanagement.security.SecurityConfigTest
+-------------------------------------------------------------------------------
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.004 s -- in com.wellness360.taskmanagement.security.SecurityConfigTest

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TaskDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">task-management</a> &gt; <a href="index.source.html" class="el_package">com.wellness360.taskmanagement.dto</a> &gt; <span class="el_source">TaskDto.java</span></div><h1>TaskDto.java</h1><pre class="source lang-java linenums">package com.wellness360.taskmanagement.dto;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wellness360.taskmanagement.model.TaskStatus;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+/**
+ * DTOs for Task API request/response payloads.
+ */
+<span class="nc" id="L19">public class TaskDto {</span>
+
+    /**
+     * Request body for creating a new task.
+     */
+<span class="pc bnc" id="L24" title="All 30 branches missed.">    @Data</span>
+<span class="fc" id="L25">    @NoArgsConstructor</span>
+<span class="fc" id="L26">    @AllArgsConstructor</span>
+    public static class CreateRequest {
+        @NotBlank(message = &quot;Title is required&quot;)
+        @Size(min = 1, max = 200, message = &quot;Title must be between 1 and 200 characters&quot;)
+<span class="fc" id="L30">        private String title;</span>
+
+        @Size(max = 1000, message = &quot;Description cannot exceed 1000 characters&quot;)
+<span class="fc" id="L33">        private String description;</span>
+
+        @JsonFormat(pattern = &quot;yyyy-MM-dd&quot;)
+        @FutureOrPresent(message = &quot;Due date must be today or in the future&quot;)
+<span class="fc" id="L37">        private LocalDate dueDate;</span>
+    }
+
+    /**
+     * Request body for updating an existing task.
+     */
+<span class="pc bpc" id="L43" title="19 of 38 branches missed.">    @Data</span>
+<span class="fc" id="L44">    @NoArgsConstructor</span>
+<span class="fc" id="L45">    @AllArgsConstructor</span>
+    public static class UpdateRequest {
+        @Size(min = 1, max = 200, message = &quot;Title must be between 1 and 200 characters&quot;)
+<span class="fc" id="L48">        private String title;</span>
+
+        @Size(max = 1000, message = &quot;Description cannot exceed 1000 characters&quot;)
+<span class="fc" id="L51">        private String description;</span>
+
+        @JsonFormat(pattern = &quot;yyyy-MM-dd&quot;)
+<span class="fc" id="L54">        private LocalDate dueDate;</span>
+
+<span class="fc" id="L56">        private TaskStatus status;</span>
+    }
+
+    /**
+     * Response payload for a task.
+     */
+<span class="pc bpc" id="L62" title="61 of 62 branches missed.">    @Data</span>
+<span class="pc" id="L63">    @Builder</span>
+<span class="fc" id="L64">    @NoArgsConstructor</span>
+<span class="fc" id="L65">    @AllArgsConstructor</span>
+    public static class Response {
+<span class="fc" id="L67">        private String id;</span>
+<span class="fc" id="L68">        private String title;</span>
+<span class="fc" id="L69">        private String description;</span>
+
+        @JsonFormat(pattern = &quot;yyyy-MM-dd&quot;)
+<span class="fc" id="L72">        private LocalDate dueDate;</span>
+
+<span class="fc" id="L74">        private String status;</span>
+
+        @JsonFormat(pattern = &quot;yyyy-MM-dd'T'HH:mm:ss&quot;)
+<span class="fc" id="L77">        private LocalDateTime createdAt;</span>
+
+        @JsonFormat(pattern = &quot;yyyy-MM-dd'T'HH:mm:ss&quot;)
+<span class="fc" id="L80">        private LocalDateTime updatedAt;</span>
+    }
+
+    /**
+     * Standard API response wrapper.
+     */
+<span class="pc bnc" id="L86" title="All 26 branches missed.">    @Data</span>
+<span class="pc" id="L87">    @Builder</span>
+<span class="fc" id="L88">    @NoArgsConstructor</span>
+<span class="fc" id="L89">    @AllArgsConstructor</span>
+    public static class ApiResponse&lt;T&gt; {
+<span class="fc" id="L91">        private boolean success;</span>
+<span class="fc" id="L92">        private String message;</span>
+<span class="fc" id="L93">        private T data;</span>
+
+        public static &lt;T&gt; ApiResponse&lt;T&gt; success(String message, T data) {
+<span class="fc" id="L96">            return ApiResponse.&lt;T&gt;builder()</span>
+<span class="fc" id="L97">                    .success(true)</span>
+<span class="fc" id="L98">                    .message(message)</span>
+<span class="fc" id="L99">                    .data(data)</span>
+<span class="fc" id="L100">                    .build();</span>
+        }
+
+        public static &lt;T&gt; ApiResponse&lt;T&gt; error(String message) {
+<span class="fc" id="L104">            return ApiResponse.&lt;T&gt;builder()</span>
+<span class="fc" id="L105">                    .success(false)</span>
+<span class="fc" id="L106">                    .message(message)</span>
+<span class="fc" id="L107">                    .build();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

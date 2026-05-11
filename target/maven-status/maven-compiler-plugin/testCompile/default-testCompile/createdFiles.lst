@@ -1,0 +1,11 @@
+com\wellness360\taskmanagement\dto\TaskDtoTest.class
+com\wellness360\taskmanagement\exception\TaskNotFoundExceptionTest.class
+com\wellness360\taskmanagement\controller\TaskControllerTest.class
+com\wellness360\taskmanagement\controller\AuthControllerTest.class
+com\wellness360\taskmanagement\repository\TaskRepositoryTest.class
+com\wellness360\taskmanagement\model\TaskStatusTest$1.class
+com\wellness360\taskmanagement\exception\GlobalExceptionHandlerTest.class
+com\wellness360\taskmanagement\dto\AuthDtoTest.class
+com\wellness360\taskmanagement\TaskServiceTest.class
+com\wellness360\taskmanagement\model\TaskTest.class
+com\wellness360\taskmanagement\model\TaskStatusTest.class

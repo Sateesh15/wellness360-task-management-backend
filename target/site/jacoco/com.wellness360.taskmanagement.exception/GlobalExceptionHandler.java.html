@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">task-management</a> &gt; <a href="index.source.html" class="el_package">com.wellness360.taskmanagement.exception</a> &gt; <span class="el_source">GlobalExceptionHandler.java</span></div><h1>GlobalExceptionHandler.java</h1><pre class="source lang-java linenums">package com.wellness360.taskmanagement.exception;
+
+import com.wellness360.taskmanagement.dto.TaskDto;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Centralized exception handling for the API.
+ * Returns consistent error responses with proper HTTP status codes.
+ */
+@RestControllerAdvice
+<span class="fc" id="L21">public class GlobalExceptionHandler {</span>
+
+    /**
+     * Handle task not found (404)
+     */
+    @ExceptionHandler(TaskNotFoundException.class)
+    public ResponseEntity&lt;TaskDto.ApiResponse&lt;Void&gt;&gt; handleTaskNotFound(TaskNotFoundException ex) {
+<span class="fc" id="L28">        return ResponseEntity</span>
+<span class="fc" id="L29">                .status(HttpStatus.NOT_FOUND)</span>
+<span class="fc" id="L30">                .body(TaskDto.ApiResponse.error(ex.getMessage()));</span>
+    }
+
+    /**
+     * Handle validation errors (400)
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity&lt;TaskDto.ApiResponse&lt;Map&lt;String, String&gt;&gt;&gt; handleValidationErrors(
+            MethodArgumentNotValidException ex) {
+<span class="fc" id="L39">        Map&lt;String, String&gt; errors = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L40">        ex.getBindingResult().getAllErrors().forEach(error -&gt; {</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">            String fieldName = error instanceof FieldError ? ((FieldError) error).getField() : error.getObjectName();</span>
+<span class="fc" id="L42">            errors.put(fieldName, error.getDefaultMessage());</span>
+<span class="fc" id="L43">        });</span>
+<span class="fc" id="L44">        return ResponseEntity</span>
+<span class="fc" id="L45">                .status(HttpStatus.BAD_REQUEST)</span>
+<span class="fc" id="L46">                .body(TaskDto.ApiResponse.&lt;Map&lt;String, String&gt;&gt;builder()</span>
+<span class="fc" id="L47">                        .success(false)</span>
+<span class="fc" id="L48">                        .message(&quot;Validation failed&quot;)</span>
+<span class="fc" id="L49">                        .data(errors)</span>
+<span class="fc" id="L50">                        .build());</span>
+    }
+
+    /**
+     * Handle illegal argument (400)
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity&lt;TaskDto.ApiResponse&lt;Void&gt;&gt; handleIllegalArgument(IllegalArgumentException ex) {
+<span class="fc" id="L58">        return ResponseEntity</span>
+<span class="fc" id="L59">                .status(HttpStatus.BAD_REQUEST)</span>
+<span class="fc" id="L60">                .body(TaskDto.ApiResponse.error(ex.getMessage()));</span>
+    }
+
+    /**
+     * Handle type mismatch in path variables (400)
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity&lt;TaskDto.ApiResponse&lt;Void&gt;&gt; handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+<span class="fc" id="L68">        return ResponseEntity</span>
+<span class="fc" id="L69">                .status(HttpStatus.BAD_REQUEST)</span>
+<span class="fc" id="L70">                .body(TaskDto.ApiResponse.error(&quot;Invalid parameter: &quot; + ex.getName()));</span>
+    }
+
+    /**
+     * Handle bad credentials (401)
+     */
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity&lt;TaskDto.ApiResponse&lt;Void&gt;&gt; handleBadCredentials(BadCredentialsException ex) {
+<span class="fc" id="L78">        return ResponseEntity</span>
+<span class="fc" id="L79">                .status(HttpStatus.UNAUTHORIZED)</span>
+<span class="fc" id="L80">                .body(TaskDto.ApiResponse.error(&quot;Invalid username or password&quot;));</span>
+    }
+
+    /**
+     * Handle all other exceptions (500)
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;TaskDto.ApiResponse&lt;Void&gt;&gt; handleGeneral(Exception ex) {
+<span class="fc" id="L88">        return ResponseEntity</span>
+<span class="fc" id="L89">                .status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="fc" id="L90">                .body(TaskDto.ApiResponse.error(&quot;An unexpected error occurred: &quot; + ex.getMessage()));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
